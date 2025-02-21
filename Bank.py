@@ -11,7 +11,9 @@ class Entity:
 
     def save(self):
         """Bendras metodas įrašyti į duomenų bazę (tiks individualiai klasėms)"""
-        raise NotImplementedError("Šis metodas turi būti įgyvendintas paveldinčioje klasėje")
+        raise NotImplementedError(
+            "Šis metodas turi būti įgyvendintas paveldinčioje klasėje"
+        )
 
 
 # Savininko klasė, paveldinti iš Entity
@@ -27,13 +29,18 @@ class Owner(Entity):
     def save(self, db):
         """Įrašo savininką į duomenų bazę"""
         if self.id is None:
-            db.cursor.execute('''INSERT INTO owners (name, address, phone) 
-                                VALUES (?, ?, ?)''', (self.name, self.address, self.phone))
+            db.cursor.execute(
+                """INSERT INTO owners (name, address, phone)
+                                VALUES (?, ?, ?)""",
+                (self.name, self.address, self.phone),
+            )
             db.conn.commit()
             self.id = db.cursor.lastrowid
         else:
-            db.cursor.execute('''UPDATE owners SET name = ?, address = ?, phone = ? WHERE id = ?''',
-                              (self.name, self.address, self.phone, self.id))
+            db.cursor.execute(
+                """UPDATE owners SET name = ?, address = ?, phone = ? WHERE id = ?""",
+                (self.name, self.address, self.phone, self.id),
+            )
             db.conn.commit()
 
     def __str__(self):
@@ -68,17 +75,24 @@ class BankAccount(Entity):
     def save(self, db):
         """Įrašo banko sąskaitą į duomenų bazę"""
         if self.id is None:
-            db.cursor.execute('''INSERT INTO bank_accounts (owner_id, balance) 
-                                VALUES (?, ?)''', (self.owner.id, self.balance))
+            db.cursor.execute(
+                """INSERT INTO bank_accounts (owner_id, balance)
+                                VALUES (?, ?)""",
+                (self.owner.id, self.balance),
+            )
             db.conn.commit()
             self.id = db.cursor.lastrowid
         else:
-            db.cursor.execute('''UPDATE bank_accounts SET owner_id = ?, balance = ? WHERE id = ?''',
-                               (self.owner.id, self.balance, self.id))
+            db.cursor.execute(
+                """UPDATE bank_accounts SET owner_id = ?, balance = ? WHERE id = ?""",
+                (self.owner.id, self.balance, self.id),
+            )
             db.conn.commit()
 
     def __str__(self):
         return f"Account of {self.owner.name} with balance {self.balance}"
+
+
 class BankAccount(Entity):
     """Banko sąskaita - paveldi iš Entity klasės"""
 
@@ -108,17 +122,23 @@ class BankAccount(Entity):
     def save(self, db):
         """Įrašo banko sąskaitą į duomenų bazę"""
         if self.id is None:
-            db.cursor.execute('''INSERT INTO bank_accounts (owner_id, balance) 
-                                VALUES (?, ?)''', (self.owner.id, self.balance))
+            db.cursor.execute(
+                """INSERT INTO bank_accounts (owner_id, balance)
+                                VALUES (?, ?)""",
+                (self.owner.id, self.balance),
+            )
             db.conn.commit()
             self.id = db.cursor.lastrowid
         else:
-            db.cursor.execute('''UPDATE bank_accounts SET owner_id = ?, balance = ? WHERE id = ?''',
-                               (self.owner.id, self.balance, self.id))
+            db.cursor.execute(
+                """UPDATE bank_accounts SET owner_id = ?, balance = ? WHERE id = ?""",
+                (self.owner.id, self.balance, self.id),
+            )
             db.conn.commit()
 
     def __str__(self):
         return f"Account of {self.owner.name} with balance {self.balance}"
+
 
 # Duomenų bazės klasė, kuri valdo ryšį su SQLite
 class Database:
@@ -134,38 +154,44 @@ class Database:
 
     def create_tables(self):
         """Creates necessary tables if they do not exist"""
-        self.cursor.execute(''' 
+        self.cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS owners (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
                 address TEXT,
                 phone TEXT
             )
-        ''')
-        self.cursor.execute(''' 
+        """
+        )
+        self.cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS bank_accounts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 owner_id INTEGER,
                 balance REAL,
                 FOREIGN KEY (owner_id) REFERENCES owners(id)
             )
-        ''')
+        """
+        )
         self.conn.commit()
 
     def get_all_owners(self):
         """Grabs all owners from the database"""
-        self.cursor.execute('SELECT * FROM owners')
+        self.cursor.execute("SELECT * FROM owners")
         return self.cursor.fetchall()
 
     def get_account_balance(self, owner_id):
         """Get the balance of an owner's bank account"""
-        self.cursor.execute('SELECT balance FROM bank_accounts WHERE owner_id = ?', (owner_id,))
+        self.cursor.execute(
+            "SELECT balance FROM bank_accounts WHERE owner_id = ?", (owner_id,)
+        )
         result = self.cursor.fetchone()
         return result[0] if result else 0.0
 
     def get_total_balance(self):
         """Get the total balance of all bank accounts"""
-        self.cursor.execute('SELECT SUM(balance) FROM bank_accounts')
+        self.cursor.execute("SELECT SUM(balance) FROM bank_accounts")
         result = self.cursor.fetchone()
         return result[0] if result else 0.0
 
@@ -194,7 +220,9 @@ if __name__ == "__main__":
     # Paimti visų savininkų sąrašą
     owners = db.get_all_owners()
     for owner_data in owners:
-        print(f"Owner ID: {owner_data[0]}, Name: {owner_data[1]}, Address: {owner_data[2]}, Phone: {owner_data[3]}")
+        print(
+            f"Owner ID: {owner_data[0]}, Name: {owner_data[1]}, Address: {owner_data[2]}, Phone: {owner_data[3]}"
+        )
 
     # Paimti sąskaitos balansą pagal savininką
     owner_balance = db.get_account_balance(owner.id)

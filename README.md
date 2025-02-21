@@ -38,7 +38,7 @@ Before running the project, make sure you have:
 
 - Python 3.x installed.
 - SQLite3 (comes pre-installed with Python).
-  
+
 No additional libraries or dependencies are required, as SQLite and basic Python libraries are used.
 
 ---
