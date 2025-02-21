@@ -33,6 +33,9 @@ The system uses SQLite for data storage, with a simple relational schema to trac
 ---
 
 ## Requirements
+ ```bash
+pip install -r requirements.txt
+ ```
 
 Before running the project, make sure you have:
 
